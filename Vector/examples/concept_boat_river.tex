@@ -1,0 +1,166 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{Boat-River Vector Simulation Using Custom Vector Engine}
+\author{Alomgir Bhuiyan}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This document explains a C-based vector simulation program that models boat motion in a river using a custom vector library. The system uses both Cartesian and Polar vector representations to compute resultant velocity and direction.
+
+The goal is to determine:
+\begin{itemize}
+    \item Final velocity of the boat
+    \item Direction (angle) of motion relative to the river bank
+\end{itemize}
+
+\section{Physical Model}
+
+The motion is based on relative velocity:
+
+\[
+\vec{R} = \vec{V}_{boat} + \vec{V}_{river}
+\]
+
+Where:
+\begin{itemize}
+    \item $\vec{V}_{boat}$ = velocity of boat in still water
+    \item $\vec{V}_{river}$ = velocity of river current
+    \item $\vec{R}$ = resultant velocity
+\end{itemize}
+
+\section{Vector Engine Usage}
+
+The program uses a custom vector library with:
+\begin{itemize}
+    \item Cartesian vectors: $(i, j, k)$
+    \item Polar vectors: $(r, \theta)$ or $(r, \theta_x, \theta_y, \theta_z)$
+    \item Workspace memory system for allocation
+\end{itemize}
+
+\section{Memory Allocation System}
+
+\[
+\text{VectorWorkspace} = \text{preallocated memory block}
+\]
+
+Instead of multiple allocations, all vectors are stored inside a single workspace:
+
+\[
+\texttt{VectorAllocate(24)}
+\]
+
+This improves performance and reduces fragmentation.
+
+\section{Boat and River Velocity Definition}
+
+The velocities are defined in polar form:
+
+\subsection{Boat Velocity}
+
+\[
+V_{boat} = (r = 4, \theta = 120^\circ)
+\]
+
+This means the boat moves with magnitude 4 at an angle of 120 degrees.
+
+\subsection{River Velocity}
+
+\[
+V_{river} = (r = 2, \theta = 0^\circ)
+\]
+
+This represents current flow along a fixed axis.
+
+\section{Conversion to Cartesian Form}
+
+The library converts polar vectors to Cartesian form using:
+
+\[
+V_x = r \cos\theta
+\]
+\[
+V_y = r \sin\theta
+\]
+
+So:
+\begin{itemize}
+    \item Boat vector becomes $(x_b, y_b)$
+    \item River vector becomes $(x_r, y_r)$
+\end{itemize}
+
+\section{Resultant Vector Calculation}
+
+The resultant vector is computed using vector addition:
+
+\[
+\vec{R} = \vec{V}_{boat} + \vec{V}_{river}
+\]
+
+Component-wise:
+
+\[
+R_x = V_{bx} + V_{rx}
+\]
+\[
+R_y = V_{by} + V_{ry}
+\]
+
+This is implemented using:
+
+\texttt{Resultant(vectors, 2, vws)}
+
+\section{Conversion Back to Polar Form}
+
+After computing the resultant vector in Cartesian form, it is converted back:
+
+\[
+r = \sqrt{R_x^2 + R_y^2}
+\]
+
+\[
+\theta = \tan^{-1}\left(\frac{R_y}{R_x}\right)
+\]
+
+This is handled by:
+
+\texttt{CartesianVectorToPolar(R, vws)}
+
+\section{Final Output Interpretation}
+
+The program prints:
+
+\begin{itemize}
+    \item Magnitude of resultant velocity
+    \item Angle of motion relative to river bank
+\end{itemize}
+
+\[
+\text{Final velocity} = |\vec{R}|
+\]
+\[
+\text{Direction} = \theta
+\]
+
+\section{Why This Design Works}
+
+This system is designed to:
+\begin{itemize}
+    \item Separate physics (math) from implementation (C code)
+    \item Support both coordinate systems
+    \item Allow reusable vector operations
+    \item Model real-world motion using vector algebra
+\end{itemize}
+
+\section{Conclusion}
+
+The program successfully simulates boat-river motion using a custom vector engine. It demonstrates real-world application of vector addition, coordinate conversion, and relative velocity using a structured computational approach.
+
+\end{document}

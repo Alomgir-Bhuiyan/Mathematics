@@ -1,0 +1,18 @@
+cc = gcc
+
+cflags = -fPIC -Wall -Wextra -O2
+ldflags = -shared -lm
+
+rule compile
+    command = $cc $cflags -c $in -o $out
+    description = Compiling $in
+
+rule link
+    command = $cc $in -o $out $ldflags
+    description = Linking $out
+
+build vector.o: compile vector.c
+
+build libvector.so: link vector.o
+
+default libvector.so
